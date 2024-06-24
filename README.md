@@ -84,6 +84,11 @@ sudo netplan apply
 der neu Netplan wird erstellt.
 
 ```bash
+sudo nano /etc/systemd/resolved.conf
+#DNS=xxx.xxx.xxx.xxx
+(#FallbackDNS=8.8.8.8)
+
+_______ALT NICHT NUTZEN
 cat /etc/resolv.conf
 nameserver xxx.xxx.xxx.xxx
 search fritz.box
@@ -91,6 +96,7 @@ search fritz.box
 sudo nano /etc/resolv.conf
 nameserver xxx.xxx.xxx.xxx
 search xxx.local
+_______
 ```
 ```bash
 sudo systemctl status systemd-timesyncd
@@ -152,6 +158,22 @@ Dieser Befehl fragt die Domain an, ob sie existiert oder nicht.
 ```bash
 realm discover xxx.local
 ```
+Dieser Befehl fragt die Domain an, ob sie existiert oder nicht.
+```bash
+realm discover xxx.local --verbose
+```
+Unterschied zwischen --verbose und ohne
+<details>
+<summary>VERBOSE</summary>
+  
+![verbose](https://github.com/blvkf0rest/ubuntuad/assets/74656799/5f3f409b-3ab4-45e0-899c-23fbcae6cbe3) ![ohneverbose](https://github.com/blvkf0rest/ubuntuad/assets/74656799/116cc614-f5f5-4ed5-9b5b-9b16072183e3)
+
+</details>
+
+
+
+
+
 Informationen für das AD vorbereiten
 ```bash
 sudo nano /etc/realmd.conf
