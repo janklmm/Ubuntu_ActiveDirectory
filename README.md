@@ -28,9 +28,10 @@ network:
        - to: default
          via: 192.168.10.5
      nameservers:
-       addresses: [192.168.10.5]    # IP des DNS
+       addresses:
+       - 192.168.10.5    # IP des DNS
        search:
-       - xxx.local
+       - "xxx.local"
 ```
 Wenn die Datei fertig geschrieben ist, mit STRG+X schließen. 
 Es wird gefragt ob man die Datei speichern will, das mit "Y" bestätigen, als nächstes wird gefragt unter welchem Namen die Datei gespeichert werden soll. Das mit Enter bestätigen.
