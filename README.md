@@ -1,5 +1,5 @@
 # Ubuntu 22.04 in eine Active Directory Domain einbinden
-
+[Active Directory](#active-directory)
 
 ## Erstellen der Statischen IP & IPv6 deaktivieren
 
@@ -44,6 +44,7 @@ network:
    eth0:
      link-local: []
 ```
+Speichern und schließen
 ```bash
 sudo nano /etc/sysctl.d/99-ipv6-disable.conf
 
@@ -62,7 +63,20 @@ Sollten hier keine Fehler auftreten, kann mit
 ```bash
 sudo netplan apply
 ```
-der neuu Netplan erstellt werden.
+der neu Netplan wird erstellt.
+
+Der Ubuntu Client, sollte jetzt neugestartet werden. Entweder über das Terminal mit ** reboot ** oder über die GUI
+
+Nach dem Neustart kann über das Terminal mit ** ip a ** die IP Adresse abgefragt werden, oder über die GUI Einstellungen -> Netzwerk -> auf das Zahnrad
+
+<details>
+<summary>Bilder IP Config</summary>
+  
+![Screenshot 2024-06-24 203219](https://github.com/blvkf0rest/ubuntuad/assets/74656799/b1da95a2-968f-473f-aa1f-d4a8b1fc987a)
+
+![Screenshot 2024-06-24 203358](https://github.com/blvkf0rest/ubuntuad/assets/74656799/400d4d87-8cd7-42b7-8880-5e6c1f58e260)
+
+</details>
 
 ## Fehler
 Syntax Fehler:
@@ -70,7 +84,8 @@ Syntax Fehler:
 ERROR:root:/etc/netplan/01-netcfg.yaml:3:12: Invalid YAML: inconsistent indentation: renderer: networkd
                                                                                              ^           
 ```
-Bedeutet es, dass die Zeile bei "renderer: networkd" falsch gesetzt ist. 
+Bedeutet
+ es, dass die Zeile bei "renderer: networkd" falsch gesetzt ist. 
 Beispiel: 
 ```bash
 network:
@@ -95,6 +110,14 @@ Die Datei hat jetzt folgende Berechtigung: rw- --- ---
 [chmod zum selber nachlesen](https://www.linode.com/docs/guides/modify-file-permissions-with-chmod/)
 
 # Active Directory
+
+Um Ubuntu in eine Windows Domain einzubinden, werden noch einige zusätzliche Pakete benötigt. 
+
+```bash
+sudo apt-get install realmd sssd sssd-tools libnss-sss libpam-sss adcli samba-common-bin oddjob oddjob-mkhomedir packagekit
+```
+
+
 
 ```bash
 sudo nano /etc/netplan/01-netcfg.yaml
