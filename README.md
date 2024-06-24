@@ -3,6 +3,14 @@
 [Active Directory](#active-directory)
 [Fehler AD](#probleme)
 
+## Installation wichtiger Software
+
+
+```bash
+sudo apt-get install realmd sssd sssd-tools libnss-sss libpam-sss adcli samba-common-bin oddjob oddjob-mkhomedir packagekit
+```
+
+
 ## Erstellen der Statischen IP & IPv6 deaktivieren
 
 ```bash
@@ -12,7 +20,6 @@ Es ist wichtig, das sich an die Syntax gehalten wird, sollte es nicht passen, we
 
 Hier wird folgendes Eingetragen:
 "#" steht für ein Kommentar
-
 
 ```bash
 network:
@@ -70,6 +77,25 @@ sudo netplan apply
 ```
 der neu Netplan wird erstellt.
 
+```bash
+cat /etc/resolv.conf
+nameserver xxx.xxx.xxx.xxx
+search fritz.box
+
+sudo nano /etc/resolv.conf
+nameserver xxx.xxx.xxx.xxx
+search xxx.local
+```
+```bash
+sudo systemctl status systemd-timesyncd
+sudo nano /etc/systemd/timesyncd.conf
+
+NTP=xxx.xxx.xxx.xxx
+```
+```bash
+sudo systemctl restart systemd-timesyncd
+```
+
 Der Ubuntu Client, sollte jetzt neugestartet werden. Entweder über das Terminal mit ** reboot ** oder über die GUI
 
 Nach dem Neustart kann über das Terminal mit ** ip a ** die IP Adresse abgefragt werden, oder über die GUI Einstellungen -> Netzwerk -> auf das Zahnrad
@@ -116,25 +142,34 @@ Die Datei hat jetzt folgende Berechtigung: rw- --- ---
 
 # Active Directory
 
-Um Ubuntu in eine Windows Domain einzubinden, werden noch einige zusätzliche Pakete benötigt. 
-
-```bash
-sudo apt-get install realmd sssd sssd-tools libnss-sss libpam-sss adcli samba-common-bin oddjob oddjob-mkhomedir packagekit
-```
 Dieser Befehl fragt die Domain an, ob sie existiert oder nicht.
 ```bash
 realm discover xxx.local
 ```
+Informationen für das AD vorbereiten
+```bash
+sudo nano /etc/realmd.conf
+```
+```bash
+[active-directory]
+os-name = Ubuntu GNU/Linux
+os-version = xx.xx (Versions Name) #welche Version gerade gentutz wird
+```
+
 Der Domain beitreten:
 ```bash
-realm join xxx.local
+realm join -U USERNAME xxx.local
 ```
-Man wird aufgefordert ein Passwort einzugeben, es ist das Passwort eines Domain-Admins. 
-Nach der eingabe, wird man aufgefordert das Lokale Passwort einzugeben. 
+DOMAIN PASSWORT EINGEBEN 
 
-Sollte die Eingabe BEIDER Passwörter erfolgreich sein, passiert nichts. 
-
-Um zu Überprüfen, ob man in der Domain ist und man zugriff hat, kann man mit
+Host in eine OU hhinzufügen
+```bash
+sudo realm join --verbose --user=Linux --computer-ou="OU=Ubuntu,OU=HQ,DC=jan,DC=local" jan.local
+```
+Überprüfen, ob man in der Domain ist und man zugriff hat, kann man mit
+```bash
+sudo realm list
+```
 ```bash
 id xxx@xxx.local
 ```
@@ -146,8 +181,27 @@ einen Benutzer der Domain abfragen, bekommt man eine Positive Antwort sieht es f
 
 </details>
 
-Der Lokale Benutzer kann nun abgemeldet werden. 
-Im Anmeldebildschirm hat man die Möglichkeit, einen neuen Benutzer hinzuzufügen indem man auf "not listed?" klickt. 
+Automatisches erstellen des HomeOrdners
+
+```bash
+sudo bash -c "cat > /usr/share/pam-configs/mkhomedir" <<EOF
+Name: activate mkhomedir
+Default: yes
+Priority: 900
+Session-Type: Additional
+Session:
+required pam_mkhomedir.so umask=0022 skel=/etc/skel
+EOF
+```
+Aktivieren des HomeOrdners
+```bash
+sudo pam-auth-update
+```
+<details>
+<summary>mkhomedir</summary>
+
+
+</details>
 
 Hier kann man sich dann mit dem Domain-Admin oder einen anderem Domain User anmelden. 
 <details>
@@ -161,7 +215,7 @@ Willkommen in der Domain!
 
 Für den HostA Eintrag ist folgender Befehl zu benutzen:
 ```bash
- hostnamectl set-hostname CLIENTNAME.DOMAIN.local
+ systemctl status sssd
 ```
 Danach wird der Service neugestartet
 ```bash
@@ -170,6 +224,20 @@ service sssd restart
 
 Danach ist der HostA Eintrag im DNS vom AD zu finden. 
 
+Wechseln auf den Domain Nutzers
+```bash
+su - linux@jan.local
+```
+Danach sollte das Terminal so aussehen:
+
+linux@jan.local@ubnt22:~$
+
+Jeden Domain Nutzer erlauben sich mit dem Ubuntu Client zu verbinden:
+```bash
+sudo realm permit --all
+oder es zu verbieten
+sudo realm deny --all
+```
 
 # Probleme
 
