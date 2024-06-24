@@ -71,6 +71,12 @@ Zum Überprüfen ob die Einstellungen korrekt sind, wird folgender Befehl benutz
 ```bash
 sudo netplan try
 ```
+Hier kann eine fehlermeldung erscheinen, dieses kann ignoriert werden. [Klick-Bug](https://ubuntuforums.org/showthread.php?t=2495406&p=14179792#post14179792)
+```bash
+WARNING:root:Cannot call Open vSwitch: ovsdb-server.service is not running.
+```
+
+
 Sollten hier keine Fehler auftreten, kann mit 
 ```bash
 sudo netplan apply
