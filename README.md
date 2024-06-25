@@ -260,13 +260,11 @@ sudo realm deny --all
 # Probleme
 
 
-
-
-
-nslookup funktioniert über Ubuntu nicht. (Problem: die /etc/resolv. // sollte nicht bearbeitet werden)
+nslookup funktioniert anscheinend über Ubuntu nicht. 
+(Problem: die /etc/resolv. sollte nicht bearbeitet werden da sie sich nach jedem neustart selber schreibt)
 ![Screenshot 2024-06-24 215629](https://github.com/blvkf0rest/ubuntuad/assets/74656799/1b360a39-d480-46bc-94b2-5a704cb84001)
 
-über den AD geht es.
+nslookup über AD ohne probleme
 
 ![Screenshot 2024-06-24 215712](https://github.com/blvkf0rest/ubuntuad/assets/74656799/90384654-4bbf-4631-9b5f-8ad105fa6575)
 
@@ -278,6 +276,8 @@ nslookup funktioniert über Ubuntu nicht. (Problem: die /etc/resolv. // sollte n
 
 
 _____________________________________________
+## Alt, Test, nicht nutzen
+
 altes zeug
 
 Informationen für das AD vorbereiten
