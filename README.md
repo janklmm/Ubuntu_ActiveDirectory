@@ -26,6 +26,9 @@ sudo nano /etc/sudoers
 root                   ALL=(ALL:ALL) ALL
 %LinuxAdmins@jan.local ALL=(ALL:ALL) ALL
 ```
+Wenn die Datei fertig geschrieben ist, mit STRG+X schließen. 
+Es wird gefragt ob man die Datei speichern will, das mit "Y" bestätigen, als nächstes wird gefragt unter welchem Namen die Datei gespeichert werden soll. Dies mit Enter bestätigen. (so werden alle Datein, wenn sie mit 'Nano' geöffnet wurden, gespeichert)
+
 Auf dem AD brauchen wir eine Sicherheitsgruppe mit GENAU dem selben Namen:
 
 "LinuxAdmins"
@@ -63,9 +66,6 @@ network:
        search:
        - "xxx.local"
 ```
-Wenn die Datei fertig geschrieben ist, mit STRG+X schließen. 
-Es wird gefragt ob man die Datei speichern will, das mit "Y" bestätigen, als nächstes wird gefragt unter welchem Namen die Datei gespeichert werden soll. Dies mit Enter bestätigen.
-
 IPv6 deaktivieren
 ```bash
 sudo nano /etc/netplan/99-disable-link-local.yaml
