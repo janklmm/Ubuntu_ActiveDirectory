@@ -139,8 +139,10 @@ Nach dem Neustart kann über das Terminal mit ** ip a ** die IP Adresse abgefrag
 </details>
 
 ## Fehler
+
 <details>
   <summary>Lösung</summary>
+  
 Syntax Fehler:
 ```bash
 ERROR:root:/etc/netplan/01-netcfg.yaml:3:12: Invalid YAML: inconsistent indentation: renderer: networkd
@@ -170,6 +172,7 @@ sudo chmod 600 /etc/netplan/01-netcfg.yaml
 Die Datei hat jetzt folgende Berechtigung: rw- --- ---
 
 [chmod zum selber nachlesen](https://www.linode.com/docs/guides/modify-file-permissions-with-chmod/)
+
 </details>
 
 # Active Directory
