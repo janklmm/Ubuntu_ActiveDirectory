@@ -7,8 +7,31 @@
 
 
 ```bash
-sudo apt-get install realmd sssd sssd-tools libnss-sss libpam-sss adcli samba-common-bin oddjob oddjob-mkhomedir packagekit
+sudo apt-get install realmd sssd sssd-tools libnss-sss libpam-sss adcli samba-common-bin krb5-user oddjob oddjob-mkhomedir packagekit
 ```
+
+## Sudo für vorbereiten Domain-Admins
+
+Sollte man einen Sudo-Befehl als Domain-Admin ohne Sudo rechte ausführen, kommt folgende Meldung:
+
+"linux@jan.local ist nicht in der sudoers-Datei. Dieser Vorfall wird gemeldet."
+
+Aus diesen Grund müssen vorbereitungen getroffen werden.
+```bash
+sudo nano /etc/sudoers
+```
+```bash
+# User privilege specification
+root                   ALL=(ALL:ALL) ALL
+%LinuxAdmins@jan.local ALL=(ALL:ALL) ALL
+```
+Auf dem AD brauchen wir eine Sicherheitsgruppe mit GENAU dem selben Namen:
+
+"LinuxAdmins"
+
+In diese Gruppe kommen dann die Benutzer, die sich mit dem Linux Client verbinden sollen und Sudo rechte haben sollen
+
+Damit ist die Vorbereitung der Rechte fertig
 
 
 ## Erstellen der Statischen IP & IPv6 deaktivieren
@@ -88,6 +111,8 @@ sudo nano /etc/systemd/resolved.conf
 #DNS=xxx.xxx.xxx.xxx
 (#FallbackDNS=8.8.8.8)
 
+sudo systemctl restart systemd-resolved
+
 _______ALT NICHT NUTZEN
 cat /etc/resolv.conf
 nameserver xxx.xxx.xxx.xxx
@@ -154,6 +179,15 @@ Die Datei hat jetzt folgende Berechtigung: rw- --- ---
 
 # Active Directory
 
+Überprüfen des aktuellen Host Namen
+```bash
+hostnamectl
+```
+Setzen des Host Namen
+```bash
+sudo hostnamectl set-hostname xxx.xxx.local
+```
+
 Dieser Befehl fragt die Domain an, ob sie existiert oder nicht.
 ```bash
 realm discover xxx.local
@@ -171,29 +205,12 @@ Unterschied zwischen --verbose und ohne
 </details>
 
 
-
-
-
-Informationen für das AD vorbereiten
-```bash
-sudo nano /etc/realmd.conf
-```
-```bash
-[active-directory]
-os-name = Ubuntu GNU/Linux
-os-version = xx.xx (Versions Name) #welche Version gerade gentutz wird
-```
-
 Der Domain beitreten:
 ```bash
-realm join -U USERNAME xxx.local
+sudo realm join --user=USERNAME -v xxx.local
 ```
 DOMAIN PASSWORT EINGEBEN 
 
-Host in eine OU hhinzufügen
-```bash
-sudo realm join --verbose --user=Linux --computer-ou="OU=Ubuntu,OU=HQ,DC=jan,DC=local" jan.local
-```
 Überprüfen, ob man in der Domain ist und man zugriff hat, kann man mit
 ```bash
 sudo realm list
@@ -201,13 +218,8 @@ sudo realm list
 ```bash
 id xxx@xxx.local
 ```
-einen Benutzer der Domain abfragen, bekommt man eine Positive Antwort sieht es folgendermaßen aus:
-<details>
-<summary>id abfrage</summary>
+Willkommen in der Domain!
 
-![Screenshot 2024-06-24 205541](https://github.com/blvkf0rest/ubuntuad/assets/74656799/720a85f2-618b-4d46-9bd0-2e987431e78a)
-
-</details>
 
 Automatisches erstellen des HomeOrdners
 
@@ -228,27 +240,8 @@ sudo pam-auth-update
 <details>
 <summary>mkhomedir</summary>
 
-
+  ![Screenshot 2024-06-25 015600](https://github.com/blvkf0rest/ubuntuad/assets/74656799/90ce55dd-10e2-4391-940c-c34e306a351a)
 </details>
-
-Hier kann man sich dann mit dem Domain-Admin oder einen anderem Domain User anmelden. 
-<details>
-<summary>Domain anmeldung</summary>
-
-![Screenshot 2024-06-24 210352](https://github.com/blvkf0rest/ubuntuad/assets/74656799/701dc40c-e2c1-485d-a3fa-9b685e975233)
-
-</details>
-
-Willkommen in der Domain!
-
-Für den HostA Eintrag ist folgender Befehl zu benutzen:
-```bash
- systemctl status sssd
-```
-Danach wird der Service neugestartet
-```bash
-service sssd restart
-```
 
 Danach ist der HostA Eintrag im DNS vom AD zu finden. 
 
@@ -258,7 +251,7 @@ su - linux@jan.local
 ```
 Danach sollte das Terminal so aussehen:
 
-linux@jan.local@ubnt22:~$
+linux@jan.local@xxxx:~$
 
 Jeden Domain Nutzer erlauben sich mit dem Ubuntu Client zu verbinden:
 ```bash
@@ -267,9 +260,24 @@ oder es zu verbieten
 sudo realm deny --all
 ```
 
+
+
+
+
+
+
+
+
+
+
+
 # Probleme
 
-nslookup funktioniert über Ubuntu nicht. 
+
+
+
+
+nslookup funktioniert über Ubuntu nicht. (Problem: die /etc/resolv.
 ![Screenshot 2024-06-24 215629](https://github.com/blvkf0rest/ubuntuad/assets/74656799/1b360a39-d480-46bc-94b2-5a704cb84001)
 
 über den AD geht es.
@@ -277,6 +285,33 @@ nslookup funktioniert über Ubuntu nicht.
 ![Screenshot 2024-06-24 215712](https://github.com/blvkf0rest/ubuntuad/assets/74656799/90384654-4bbf-4631-9b5f-8ad105fa6575)
 
 
+
+
+
+
+
+
+_____________________________________________
+altes zeug
+
+Informationen für das AD vorbereiten
+```bash
+sudo nano /etc/realmd.conf
+```
+```bash
+[active-directory]
+os-name = Ubuntu GNU/Linux
+os-version = xx.xx (Versions Name) #welche Version gerade gentutz wird
+```
+Für den HostA Eintrag ist folgender Befehl zu benutzen:
+```bash
+ systemctl status sssd
+```
+Danach wird der Service neugestartet
+```bash
+service sssd restart
+```
+____________
 ```bash
 sudo nano /etc/netplan/01-netcfg.yaml
 ```
