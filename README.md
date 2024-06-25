@@ -10,9 +10,9 @@
 sudo apt-get install realmd sssd sssd-tools libnss-sss libpam-sss adcli samba-common-bin krb5-user oddjob oddjob-mkhomedir packagekit
 ```
 
-## Sudo für vorbereiten Domain-Admins
+## Sudo für Domain-Admins
 
-Sollte man einen Sudo-Befehl als Domain-Admin ohne Sudo rechte ausführen, kommt folgende Meldung:
+Führt man einen Sudo-Befehl als Domain-Admin ohne Sudo rechte ausführen, kommt folgende Meldung:
 
 "linux@jan.local ist nicht in der sudoers-Datei. Dieser Vorfall wird gemeldet."
 
@@ -29,9 +29,9 @@ Auf dem AD brauchen wir eine Sicherheitsgruppe mit GENAU dem selben Namen:
 
 "LinuxAdmins"
 
-In diese Gruppe kommen dann die Benutzer, die sich mit dem Linux Client verbinden sollen und Sudo rechte haben sollen
+In diese Gruppe kommen dann die Domain-Admins
 
-Damit ist die Vorbereitung der Rechte fertig
+Damit ist die Vorbereitung der Sudo-Rechte fertig
 
 
 ## Erstellen der Statischen IP & IPv6 deaktivieren
@@ -41,7 +41,6 @@ sudo nano /etc/netplan/01-netcfg.yaml
 ```
 Es ist wichtig, das sich an die Syntax gehalten wird, sollte es nicht passen, werden Fehler bei der Ausgabe angezeigt. Sollte das der Fall sein, müssen die Leerzeichen angepasst werden. 
 
-Hier wird folgendes Eingetragen:
 "#" steht für ein Kommentar
 
 ```bash
@@ -54,8 +53,8 @@ network:
      link-local: [ipv4]
      dhcp4: no
      addresses: [192.168.10.11/24]  # Die IP, des Clients
-     routes:                        # Routes anstatt Gateway
-       - to: default
+     routes:                        # Routes anstatt Gateway,
+       - to: default                # da Gateway von Netplan nicht genutzt wird und fehler auftreten können
          via: 192.168.10.5
      nameservers:
        addresses:
@@ -64,7 +63,7 @@ network:
        - "xxx.local"
 ```
 Wenn die Datei fertig geschrieben ist, mit STRG+X schließen. 
-Es wird gefragt ob man die Datei speichern will, das mit "Y" bestätigen, als nächstes wird gefragt unter welchem Namen die Datei gespeichert werden soll. Das mit Enter bestätigen.
+Es wird gefragt ob man die Datei speichern will, das mit "Y" bestätigen, als nächstes wird gefragt unter welchem Namen die Datei gespeichert werden soll. Dies mit Enter bestätigen.
 
 IPv6 deaktivieren
 ```bash
@@ -99,12 +98,11 @@ Hier kann eine fehlermeldung erscheinen, dieses kann ignoriert werden. [Klick-Bu
 WARNING:root:Cannot call Open vSwitch: ovsdb-server.service is not running.
 ```
 
-
-Sollten hier keine Fehler auftreten, kann mit 
+Sollten hier KEINE (bis auf den oben genannten) Fehler auftreten, kann mit 
 ```bash
 sudo netplan apply
 ```
-der neu Netplan wird erstellt.
+der neue Netplan erstellt werden.
 
 ```bash
 sudo nano /etc/systemd/resolved.conf
@@ -113,27 +111,19 @@ sudo nano /etc/systemd/resolved.conf
 
 sudo systemctl restart systemd-resolved
 
-_______ALT NICHT NUTZEN
-cat /etc/resolv.conf
-nameserver xxx.xxx.xxx.xxx
-search fritz.box
-
-sudo nano /etc/resolv.conf
-nameserver xxx.xxx.xxx.xxx
-search xxx.local
-_______
+______nicht nutzen_______
+(sudo nano /etc/resolv.conf)
+(search xxx.local)
 ```
 ```bash
 sudo systemctl status systemd-timesyncd
 sudo nano /etc/systemd/timesyncd.conf
 
-NTP=xxx.xxx.xxx.xxx
+NTP=xxx.xxx.xxx.xxx #AD IP
 ```
 ```bash
 sudo systemctl restart systemd-timesyncd
 ```
-
-Der Ubuntu Client, sollte jetzt neugestartet werden. Entweder über das Terminal mit ** reboot ** oder über die GUI
 
 Nach dem Neustart kann über das Terminal mit ** ip a ** die IP Adresse abgefragt werden, oder über die GUI Einstellungen -> Netzwerk -> auf das Zahnrad
 
@@ -147,6 +137,8 @@ Nach dem Neustart kann über das Terminal mit ** ip a ** die IP Adresse abgefrag
 </details>
 
 ## Fehler
+<details>
+  <summary>Lösung</summary>
 Syntax Fehler:
 ```bash
 ERROR:root:/etc/netplan/01-netcfg.yaml:3:12: Invalid YAML: inconsistent indentation: renderer: networkd
@@ -176,6 +168,7 @@ sudo chmod 600 /etc/netplan/01-netcfg.yaml
 Die Datei hat jetzt folgende Berechtigung: rw- --- ---
 
 [chmod zum selber nachlesen](https://www.linode.com/docs/guides/modify-file-permissions-with-chmod/)
+</details>
 
 # Active Directory
 
@@ -188,11 +181,11 @@ Setzen des Host Namen
 sudo hostnamectl set-hostname xxx.xxx.local
 ```
 
-Dieser Befehl fragt die Domain an, ob sie existiert oder nicht.
+Dieser Befehl fragt die Domain ab, ob sie existiert oder nicht.
 ```bash
 realm discover xxx.local
 ```
-Dieser Befehl fragt die Domain an, ob sie existiert oder nicht.
+Dieser Befehl fragt die Domain ab, ob sie existiert oder nicht.
 ```bash
 realm discover xxx.local --verbose
 ```
@@ -220,6 +213,7 @@ id xxx@xxx.local
 ```
 Willkommen in der Domain!
 
+## Erstellen des HomeOrdners
 
 Automatisches erstellen des HomeOrdners
 
@@ -233,7 +227,7 @@ Session:
 required pam_mkhomedir.so umask=0022 skel=/etc/skel
 EOF
 ```
-Aktivieren des HomeOrdners
+Aktivieren des HomeOrdners. (Mit Tab navigieren, mit Leertaste auswählen, mit Enter beenden)
 ```bash
 sudo pam-auth-update
 ```
@@ -243,7 +237,7 @@ sudo pam-auth-update
   ![Screenshot 2024-06-25 015600](https://github.com/blvkf0rest/ubuntuad/assets/74656799/90ce55dd-10e2-4391-940c-c34e306a351a)
 </details>
 
-Danach ist der HostA Eintrag im DNS vom AD zu finden. 
+Der HostA sowie der Reverse Eintrag sind nun im AD hinterlegt 
 
 Wechseln auf den Domain Nutzers
 ```bash
@@ -262,22 +256,13 @@ sudo realm deny --all
 
 
 
-
-
-
-
-
-
-
-
-
 # Probleme
 
 
 
 
 
-nslookup funktioniert über Ubuntu nicht. (Problem: die /etc/resolv.
+nslookup funktioniert über Ubuntu nicht. (Problem: die /etc/resolv. // sollte nicht bearbeitet werden)
 ![Screenshot 2024-06-24 215629](https://github.com/blvkf0rest/ubuntuad/assets/74656799/1b360a39-d480-46bc-94b2-5a704cb84001)
 
 über den AD geht es.
@@ -311,9 +296,16 @@ Danach wird der Service neugestartet
 ```bash
 service sssd restart
 ```
-____________
 ```bash
-sudo nano /etc/netplan/01-netcfg.yaml
+_______ALT NICHT NUTZEN
+cat /etc/resolv.conf
+nameserver xxx.xxx.xxx.xxx
+search fritz.box
+
+sudo nano /etc/resolv.conf
+nameserver xxx.xxx.xxx.xxx
+search xxx.local
+_______
 ```
 ```bash
 sudo nano /etc/netplan/01-netcfg.yaml
