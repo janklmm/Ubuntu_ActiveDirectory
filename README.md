@@ -15,7 +15,7 @@ sudo apt-get install realmd sssd sssd-tools libnss-sss libpam-sss adcli samba-co
 
 Führt man einen Sudo-Befehl als Domain-Admin ohne Sudo rechte ausführen, kommt folgende Meldung:
 
-"linux@jan.local ist nicht in der sudoers-Datei. Dieser Vorfall wird gemeldet."
+"linux@xxx.local ist nicht in der sudoers-Datei. Dieser Vorfall wird gemeldet."
 
 Aus diesen Grund müssen vorbereitungen getroffen werden.
 ```bash
@@ -24,7 +24,7 @@ sudo nano /etc/sudoers
 ```bash
 # User privilege specification
 root                   ALL=(ALL:ALL) ALL
-%LinuxAdmins@jan.local ALL=(ALL:ALL) ALL
+%LinuxAdmins@xxx.local ALL=(ALL:ALL) ALL
 ```
 Wenn die Datei fertig geschrieben ist, mit STRG+X schließen. 
 Es wird gefragt ob man die Datei speichern will, das mit "Y" bestätigen, als nächstes wird gefragt unter welchem Namen die Datei gespeichert werden soll. Dies mit Enter bestätigen. 
