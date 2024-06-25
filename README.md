@@ -273,6 +273,12 @@ nslookup über AD ohne probleme
 
 
 
+## Quellen
+
+ - [Server-World](https://www.server-world.info/en/note?os=Ubuntu_22.04&p=realmd)
+ - [Netplan](https://netplan.readthedocs.io/en/stable/)
+ - [Youtube](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+ - [PowerAdm](https://poweradm.com/join-ubuntu-debian-active-directory-domain/#:~:text=In%20order%20to%20join%20a%20Linux%20host%20to,-U%20k.muller%20poweradm.com%20Enter%20the%20domain%20user%20password.)
 
 
 
