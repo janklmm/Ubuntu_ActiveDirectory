@@ -1,4 +1,4 @@
-## Profitipp um schneller arbeiten zu können
+## Aktivieren der SSH Verbindung
 
 
 ```bash
