@@ -1,6 +1,7 @@
 # Ubuntu 22.04 in eine Active Directory Domain einbinden
 
 [Active Directory](#active-directory)
+
 [Fehler AD](#probleme)
 
 ## Installation wichtiger Software
