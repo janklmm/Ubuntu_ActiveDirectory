@@ -262,6 +262,7 @@ sudo realm deny --all
 
 nslookup funktioniert anscheinend über Ubuntu nicht. 
 (Problem: die /etc/resolv. sollte nicht bearbeitet werden da sie sich nach jedem neustart selber schreibt)
+
 ![Screenshot 2024-06-24 215629](https://github.com/blvkf0rest/ubuntuad/assets/74656799/1b360a39-d480-46bc-94b2-5a704cb84001)
 
 nslookup über AD ohne probleme
