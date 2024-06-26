@@ -8,7 +8,7 @@
 
 
 ```bash
-sudo apt-get install realmd sssd sssd-tools libnss-sss libpam-sss adcli samba-common-bin krb5-user oddjob oddjob-mkhomedir packagekit
+sudo apt-get install realmd sssd sssd-tools libnss-sss libpam-sss adcli samba-common-bin oddjob oddjob-mkhomedir packagekit
 ```
 
 ## Sudo für Domain-Admins
