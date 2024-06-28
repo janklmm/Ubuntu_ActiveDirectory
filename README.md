@@ -289,7 +289,13 @@ nslookup über AD ohne probleme
 _____________________________________________
 ## Alt, Test, nicht nutzen
 
-altes zeug
+Falls man nicht ins Internet kommt diese Datei löschen
+
+```bash
+sudo rm /etc/netplan/01-network-manager-all.yaml
+```
+
+
 
 Informationen für das AD vorbereiten
 ```bash
